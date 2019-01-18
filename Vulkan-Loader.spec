@@ -4,7 +4,7 @@
 #
 Name     : Vulkan-Loader
 Version  : 1.1.97
-Release  : 3
+Release  : 4
 URL      : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.97.tar.gz
 Source0  : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.97.tar.gz
 Summary  : Vulkan Loader
