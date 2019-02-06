@@ -4,7 +4,7 @@
 #
 Name     : Vulkan-Loader
 Version  : 1.1.99
-Release  : 5
+Release  : 7
 URL      : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.99.tar.gz
 Source0  : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.99.tar.gz
 Summary  : Vulkan Loader
@@ -22,7 +22,9 @@ BuildRequires : gcc-libgcc32
 BuildRequires : gcc-libstdc++32
 BuildRequires : glibc-dev32
 BuildRequires : glibc-libc32
+BuildRequires : libX11-dev
 BuildRequires : libX11-dev libICE-dev libSM-dev libXau-dev libXcomposite-dev libXcursor-dev libXdamage-dev libXdmcp-dev libXext-dev libXfixes-dev libXft-dev libXi-dev libXinerama-dev libXi-dev libXmu-dev libXpm-dev libXrandr-dev libXrender-dev libXres-dev libXScrnSaver-dev libXt-dev libXtst-dev libXv-dev libXxf86misc-dev libXxf86vm-dev
+BuildRequires : libX11-dev32
 BuildRequires : pkg-config
 BuildRequires : pkgconfig(32libudev)
 BuildRequires : pkgconfig(32pciaccess)
@@ -57,6 +59,16 @@ Provides: Vulkan-Loader-devel = %{version}-%{release}
 dev components for the Vulkan-Loader package.
 
 
+%package dev32
+Summary: dev32 components for the Vulkan-Loader package.
+Group: Default
+Requires: Vulkan-Loader-lib32 = %{version}-%{release}
+Requires: Vulkan-Loader-dev = %{version}-%{release}
+
+%description dev32
+dev32 components for the Vulkan-Loader package.
+
+
 %package lib
 Summary: lib components for the Vulkan-Loader package.
 Group: Libraries
@@ -64,6 +76,15 @@ Requires: Vulkan-Loader-license = %{version}-%{release}
 
 %description lib
 lib components for the Vulkan-Loader package.
+
+
+%package lib32
+Summary: lib32 components for the Vulkan-Loader package.
+Group: Default
+Requires: Vulkan-Loader-license = %{version}-%{release}
+
+%description lib32
+lib32 components for the Vulkan-Loader package.
 
 
 %package license
@@ -85,7 +106,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1549465429
+export SOURCE_DATE_EPOCH=1549468807
 mkdir -p clr-build
 pushd clr-build
 %cmake .. -DBUILD_WSI_MIR_SUPPORT=OFF
@@ -98,13 +119,13 @@ export ASFLAGS="$ASFLAGS --32"
 export CFLAGS="$CFLAGS -m32"
 export CXXFLAGS="$CXXFLAGS -m32"
 export LDFLAGS="$LDFLAGS -m32"
-%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DLIB_SUFFIX=32 .. -DBUILD_WSI_MIR_SUPPORT=OFF
+%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32  -DCMAKE_INSTALL_LIBDIR=/usr/lib32 -DLIB_SUFFIX=32 .. -DBUILD_WSI_MIR_SUPPORT=OFF
 make  %{?_smp_mflags}
 unset PKG_CONFIG_PATH
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1549465429
+export SOURCE_DATE_EPOCH=1549468807
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/Vulkan-Loader
 cp LICENSE.txt %{buildroot}/usr/share/package-licenses/Vulkan-Loader/LICENSE.txt
@@ -129,10 +150,21 @@ popd
 /usr/lib64/libvulkan.so
 /usr/lib64/pkgconfig/vulkan.pc
 
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/libvulkan.so
+/usr/lib32/pkgconfig/32vulkan.pc
+/usr/lib32/pkgconfig/vulkan.pc
+
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libvulkan.so.1
-/usr/lib64/libvulkan.so.1.1.97
+/usr/lib64/libvulkan.so.1.1.99
+
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libvulkan.so.1
+/usr/lib32/libvulkan.so.1.1.99
 
 %files license
 %defattr(0644,root,root,0755)
