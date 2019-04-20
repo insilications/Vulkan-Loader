@@ -4,7 +4,7 @@
 #
 Name     : Vulkan-Loader
 Version  : 1.1.106
-Release  : 12
+Release  : 13
 URL      : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.106/Vulkan-Loader-1.1.106.tar.gz
 Source0  : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.106/Vulkan-Loader-1.1.106.tar.gz
 Summary  : Vulkan Loader
