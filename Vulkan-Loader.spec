@@ -4,7 +4,7 @@
 #
 Name     : Vulkan-Loader
 Version  : 1.1.121
-Release  : 22
+Release  : 23
 URL      : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.121/Vulkan-Loader-1.1.121.tar.gz
 Source0  : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.121/Vulkan-Loader-1.1.121.tar.gz
 Summary  : Vulkan Loader
@@ -55,7 +55,6 @@ Group: Development
 Requires: Vulkan-Loader-lib = %{version}-%{release}
 Provides: Vulkan-Loader-devel = %{version}-%{release}
 Requires: Vulkan-Loader = %{version}-%{release}
-Requires: Vulkan-Loader = %{version}-%{release}
 
 %description dev
 dev components for the Vulkan-Loader package.
@@ -105,10 +104,9 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1566910119
+export SOURCE_DATE_EPOCH=1567736781
 mkdir -p clr-build
 pushd clr-build
-# -Werror is for werrorists
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -122,7 +120,6 @@ make  %{?_smp_mflags} VERBOSE=1
 popd
 mkdir -p clr-build32
 pushd clr-build32
-# -Werror is for werrorists
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -133,9 +130,9 @@ export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
 export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
-export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32"
-export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32"
-export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32"
+export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
+export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
 %cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DCMAKE_INSTALL_LIBDIR=/usr/lib32 -DLIB_SUFFIX=32 .. -DBUILD_WSI_MIR_SUPPORT=OFF
 make  %{?_smp_mflags} VERBOSE=1
 unset PKG_CONFIG_PATH
@@ -151,7 +148,7 @@ cd ../clr-build32;
 make test || :
 
 %install
-export SOURCE_DATE_EPOCH=1566910119
+export SOURCE_DATE_EPOCH=1567736781
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/Vulkan-Loader
 cp LICENSE.txt %{buildroot}/usr/share/package-licenses/Vulkan-Loader/LICENSE.txt
@@ -185,12 +182,12 @@ popd
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libvulkan.so.1
-/usr/lib64/libvulkan.so.1.1.120
+/usr/lib64/libvulkan.so.1.1.121
 
 %files lib32
 %defattr(-,root,root,-)
 /usr/lib32/libvulkan.so.1
-/usr/lib32/libvulkan.so.1.1.120
+/usr/lib32/libvulkan.so.1.1.121
 
 %files license
 %defattr(0644,root,root,0755)
