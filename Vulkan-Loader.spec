@@ -4,7 +4,7 @@
 #
 Name     : Vulkan-Loader
 Version  : 1.1.128
-Release  : 31
+Release  : 32
 URL      : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.128/Vulkan-Loader-1.1.128.tar.gz
 Source0  : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.1.128/Vulkan-Loader-1.1.128.tar.gz
 Summary  : Vulkan Loader
@@ -54,7 +54,6 @@ Summary: dev components for the Vulkan-Loader package.
 Group: Development
 Requires: Vulkan-Loader-lib = %{version}-%{release}
 Provides: Vulkan-Loader-devel = %{version}-%{release}
-Requires: Vulkan-Loader = %{version}-%{release}
 Requires: Vulkan-Loader = %{version}-%{release}
 
 %description dev
@@ -106,10 +105,9 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1574405239
+export SOURCE_DATE_EPOCH=1576005730
 mkdir -p clr-build
 pushd clr-build
-# -Werror is for werrorists
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -118,12 +116,11 @@ export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
 export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
 export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
-%cmake .. -DBUILD_WSI_MIR_SUPPORT=OFF
+%cmake ..
 make  %{?_smp_mflags}  VERBOSE=1
 popd
 mkdir -p clr-build32
 pushd clr-build32
-# -Werror is for werrorists
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -137,7 +134,7 @@ export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
 export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
 export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
 export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
-%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DCMAKE_INSTALL_LIBDIR=/usr/lib32 -DLIB_SUFFIX=32 .. -DBUILD_WSI_MIR_SUPPORT=OFF
+%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DCMAKE_INSTALL_LIBDIR=/usr/lib32 -DLIB_SUFFIX=32 ..
 make  %{?_smp_mflags}  VERBOSE=1
 unset PKG_CONFIG_PATH
 popd
@@ -152,7 +149,7 @@ cd ../clr-build32;
 make test || :
 
 %install
-export SOURCE_DATE_EPOCH=1574405239
+export SOURCE_DATE_EPOCH=1576005730
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/Vulkan-Loader
 cp %{_builddir}/Vulkan-Loader-1.1.128/LICENSE.txt %{buildroot}/usr/share/package-licenses/Vulkan-Loader/9bf8124f4495a48c4fd7104aebe2e957176b930b
@@ -186,12 +183,12 @@ popd
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libvulkan.so.1
-/usr/lib64/libvulkan.so.1.1.128
+/usr/lib64/libvulkan.so.1.1.130
 
 %files lib32
 %defattr(-,root,root,-)
 /usr/lib32/libvulkan.so.1
-/usr/lib32/libvulkan.so.1.1.128
+/usr/lib32/libvulkan.so.1.1.130
 
 %files license
 %defattr(0644,root,root,0755)
