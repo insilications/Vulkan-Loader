@@ -4,7 +4,7 @@
 #
 Name     : Vulkan-Loader
 Version  : 1.2.133
-Release  : 38
+Release  : 39
 URL      : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.2.133/Vulkan-Loader-1.2.133.tar.gz
 Source0  : https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.2.133/Vulkan-Loader-1.2.133.tar.gz
 Summary  : Vulkan Loader
@@ -54,7 +54,6 @@ Summary: dev components for the Vulkan-Loader package.
 Group: Development
 Requires: Vulkan-Loader-lib = %{version}-%{release}
 Provides: Vulkan-Loader-devel = %{version}-%{release}
-Requires: Vulkan-Loader = %{version}-%{release}
 Requires: Vulkan-Loader = %{version}-%{release}
 
 %description dev
@@ -106,10 +105,9 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1581996087
+export SOURCE_DATE_EPOCH=1582571413
 mkdir -p clr-build
 pushd clr-build
-# -Werror is for werrorists
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -123,7 +121,6 @@ make  %{?_smp_mflags}  VERBOSE=1
 popd
 mkdir -p clr-build32
 pushd clr-build32
-# -Werror is for werrorists
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -152,7 +149,7 @@ cd ../clr-build32;
 make test || :
 
 %install
-export SOURCE_DATE_EPOCH=1581996087
+export SOURCE_DATE_EPOCH=1582571413
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/Vulkan-Loader
 cp %{_builddir}/Vulkan-Loader-1.2.133/LICENSE.txt %{buildroot}/usr/share/package-licenses/Vulkan-Loader/9bf8124f4495a48c4fd7104aebe2e957176b930b
@@ -186,12 +183,12 @@ popd
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libvulkan.so.1
-/usr/lib64/libvulkan.so.1.2.132
+/usr/lib64/libvulkan.so.1.2.133
 
 %files lib32
 %defattr(-,root,root,-)
 /usr/lib32/libvulkan.so.1
-/usr/lib32/libvulkan.so.1.2.132
+/usr/lib32/libvulkan.so.1.2.133
 
 %files license
 %defattr(0644,root,root,0755)
