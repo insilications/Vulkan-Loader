@@ -1,2 +1,20 @@
 # This file contains additional pkgconfig build requirements that did
 # not get picked up automatically. One name per line, no whitespace.
+32libudev
+32pciaccess
+32pthread-stubs
+32wayland-client
+32wayland-cursor
+32wayland-egl
+32wayland-server
+32x11-xcb
+libudev
+pciaccess
+pthread-stubs
+valgrind
+wayland-client
+wayland-cursor
+wayland-egl
+wayland-server
+x11-xcb
+xcb
