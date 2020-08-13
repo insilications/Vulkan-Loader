@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : Vulkan-Loader
 Version  : 1.2.148
-Release  : 50
+Release  : 51
 URL      : file:///insilications/build/clearlinux/packages/Vulkan-Loader/Vulkan-Loader-v1.2.148.zip
 Source0  : file:///insilications/build/clearlinux/packages/Vulkan-Loader/Vulkan-Loader-v1.2.148.zip
 Source1  : file:///insilications/build/clearlinux/packages/Vulkan-Loader/googletest-release-1.10.0.zip
@@ -95,30 +95,12 @@ Requires: Vulkan-Loader = %{version}-%{release}
 dev components for the Vulkan-Loader package.
 
 
-%package dev32
-Summary: dev32 components for the Vulkan-Loader package.
-Group: Default
-Requires: Vulkan-Loader-lib32 = %{version}-%{release}
-Requires: Vulkan-Loader-dev = %{version}-%{release}
-
-%description dev32
-dev32 components for the Vulkan-Loader package.
-
-
 %package lib
 Summary: lib components for the Vulkan-Loader package.
 Group: Libraries
 
 %description lib
 lib components for the Vulkan-Loader package.
-
-
-%package lib32
-Summary: lib32 components for the Vulkan-Loader package.
-Group: Default
-
-%description lib32
-lib32 components for the Vulkan-Loader package.
 
 
 %prep
@@ -134,7 +116,7 @@ unset http_proxy
 unset https_proxy
 unset no_proxy
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1597329620
+export SOURCE_DATE_EPOCH=1597329908
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -165,7 +147,7 @@ export CXXFLAGS="${CXXFLAGS_GENERATE}"
 export FFLAGS="${FFLAGS_GENERATE}"
 export FCFLAGS="${FCFLAGS_GENERATE}"
 export LDFLAGS="${LDFLAGS_GENERATE}"
-%cmake .. -DLIB_INSTALL_DIR=lib64 -DBUILD_TESTS=1 -DBUILD_STATIC_LIBS:BOOL=ON -DBUILD_STATIC_LIBS=1 -DENABLE_SHARED:bool=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:bool=ON
+%cmake .. -DLIB_INSTALL_DIR=lib64 -DCMAKE_INSTALL_LIBDIR=lib64 -DBUILD_TESTS=1 -DBUILD_STATIC_LIBS:BOOL=ON -DBUILD_STATIC_LIBS=1 -DENABLE_SHARED:bool=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:bool=ON
 make  %{?_smp_mflags}
 
 make VERBOSE=1 V=1 %{?_smp_mflags} test || :
@@ -175,7 +157,7 @@ export CXXFLAGS="${CXXFLAGS_USE}"
 export FFLAGS="${FFLAGS_USE}"
 export FCFLAGS="${FCFLAGS_USE}"
 export LDFLAGS="${LDFLAGS_USE}"
-%cmake .. -DLIB_INSTALL_DIR=lib64 -DBUILD_TESTS=1 -DBUILD_STATIC_LIBS:BOOL=ON -DBUILD_STATIC_LIBS=1 -DENABLE_SHARED:bool=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:bool=ON
+%cmake .. -DLIB_INSTALL_DIR=lib64 -DCMAKE_INSTALL_LIBDIR=lib64 -DBUILD_TESTS=1 -DBUILD_STATIC_LIBS:BOOL=ON -DBUILD_STATIC_LIBS=1 -DENABLE_SHARED:bool=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:bool=ON
 make  %{?_smp_mflags}
 popd
 mkdir -p clr-build32
@@ -191,7 +173,7 @@ export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
 export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
 export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
 export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
-%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DCMAKE_INSTALL_LIBDIR=/usr/lib32 -DLIB_SUFFIX=32 .. -DLIB_INSTALL_DIR=lib64 -DBUILD_TESTS=1 -DBUILD_STATIC_LIBS:BOOL=ON -DBUILD_STATIC_LIBS=1 -DENABLE_SHARED:bool=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:bool=ON
+%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DCMAKE_INSTALL_LIBDIR=/usr/lib32 -DLIB_SUFFIX=32 .. -DLIB_INSTALL_DIR=lib64 -DCMAKE_INSTALL_LIBDIR=lib64 -DBUILD_TESTS=1 -DBUILD_STATIC_LIBS:BOOL=ON -DBUILD_STATIC_LIBS=1 -DENABLE_SHARED:bool=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:bool=ON
 make  %{?_smp_mflags}
 unset PKG_CONFIG_PATH
 popd
@@ -206,7 +188,7 @@ cd ../clr-build32;
 make test || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1597329620
+export SOURCE_DATE_EPOCH=1597329908
 rm -rf %{buildroot}
 pushd clr-build32
 %make_install32
@@ -229,18 +211,7 @@ popd
 /usr/lib64/libvulkan.so
 /usr/lib64/pkgconfig/vulkan.pc
 
-%files dev32
-%defattr(-,root,root,-)
-/usr/lib32/libvulkan.so
-/usr/lib32/pkgconfig/32vulkan.pc
-/usr/lib32/pkgconfig/vulkan.pc
-
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libvulkan.so.1
 /usr/lib64/libvulkan.so.1.2.150
-
-%files lib32
-%defattr(-,root,root,-)
-/usr/lib32/libvulkan.so.1
-/usr/lib32/libvulkan.so.1.2.150
