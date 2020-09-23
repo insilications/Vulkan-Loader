@@ -1,6 +1,7 @@
 # This file contains additional build requirements that did not get
 # picked up automatically. One name per line, no whitespace.
 buildreq-cmake
+extra-cmake-modules
 findutils
 gcc-dev32
 gcc-libgcc32
@@ -19,6 +20,7 @@ libXdmcp-dev
 libXext-dev
 libXfixes-dev
 libXft-dev
+libXft-dev libXi-dev
 libXi-dev
 libXinerama-dev
 libXmu-dev

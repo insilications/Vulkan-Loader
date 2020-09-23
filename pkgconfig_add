@@ -18,3 +18,4 @@ wayland-egl
 wayland-server
 x11-xcb
 xcb
+wayland-client

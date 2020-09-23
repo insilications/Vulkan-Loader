@@ -4,11 +4,11 @@
 #
 %define keepstatic 1
 Name     : Vulkan-Loader
-Version  : 1.2.148
-Release  : 51
-URL      : file:///insilications/build/clearlinux/packages/Vulkan-Loader/Vulkan-Loader-v1.2.148.zip
-Source0  : file:///insilications/build/clearlinux/packages/Vulkan-Loader/Vulkan-Loader-v1.2.148.zip
-Source1  : file:///insilications/build/clearlinux/packages/Vulkan-Loader/googletest-release-1.10.0.zip
+Version  : 20141209
+Release  : 52
+URL      : file:///insilications/build/clearlinux/packages/Vulkan-Loader/Vulkan-Loader-20141209.tar.gz
+Source0  : file:///insilications/build/clearlinux/packages/Vulkan-Loader/Vulkan-Loader-20141209.tar.gz
+Source1  : file:///insilications/build/clearlinux/packages/Vulkan-Loader/googletest-1.10.0.tar.gz
 Summary  : Vulkan Loader
 Group    : Development/Tools
 License  : GPL-2.0 LGPL-2.1 MPL-1.1
@@ -16,6 +16,7 @@ Requires: Vulkan-Loader-lib = %{version}-%{release}
 BuildRequires : Vulkan-Headers-data
 BuildRequires : Vulkan-Headers-dev
 BuildRequires : buildreq-cmake
+BuildRequires : extra-cmake-modules
 BuildRequires : extra-cmake-modules pkgconfig(wayland-client)
 BuildRequires : extra-cmake-modules pkgconfig(xcb) xcb-util-cursor-dev xcb-util-image-dev xcb-util-keysyms-dev xcb-util-renderutil-dev xcb-util-wm-dev xcb-util-dev
 BuildRequires : findutils
@@ -38,6 +39,7 @@ BuildRequires : libXdmcp-dev
 BuildRequires : libXext-dev
 BuildRequires : libXfixes-dev
 BuildRequires : libXft-dev
+BuildRequires : libXft-dev libXi-dev
 BuildRequires : libXi-dev
 BuildRequires : libXinerama-dev
 BuildRequires : libXmu-dev
@@ -95,6 +97,16 @@ Requires: Vulkan-Loader = %{version}-%{release}
 dev components for the Vulkan-Loader package.
 
 
+%package dev32
+Summary: dev32 components for the Vulkan-Loader package.
+Group: Default
+Requires: Vulkan-Loader-lib32 = %{version}-%{release}
+Requires: Vulkan-Loader-dev = %{version}-%{release}
+
+%description dev32
+dev32 components for the Vulkan-Loader package.
+
+
 %package lib
 Summary: lib components for the Vulkan-Loader package.
 Group: Libraries
@@ -103,77 +115,90 @@ Group: Libraries
 lib components for the Vulkan-Loader package.
 
 
+%package lib32
+Summary: lib32 components for the Vulkan-Loader package.
+Group: Default
+
+%description lib32
+lib32 components for the Vulkan-Loader package.
+
+
 %prep
-%setup -q -n Vulkan-Loader-v1.2.148
+%setup -q -n Vulkan-Loader
 cd %{_builddir}
-unzip -q %{_sourcedir}/googletest-release-1.10.0.zip
-cd %{_builddir}/Vulkan-Loader-v1.2.148
+tar xf %{_sourcedir}/googletest-1.10.0.tar.gz
+cd %{_builddir}/Vulkan-Loader
 mkdir -p external/googletest
-cp -r %{_builddir}/googletest-release-1.10.0/* %{_builddir}/Vulkan-Loader-v1.2.148/external/googletest
+cp -r %{_builddir}/googletest/* %{_builddir}/Vulkan-Loader/external/googletest
 
 %build
 unset http_proxy
 unset https_proxy
 unset no_proxy
+export SSL_CERT_FILE=/var/cache/ca-certs/anchors/ca-certificates.crt
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1597329908
+export SOURCE_DATE_EPOCH=1600830818
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
 ## altflags_pgo content
 ## pgo generate
 export PGO_GEN="-fprofile-generate=/var/tmp/pgo -fprofile-dir=/var/tmp/pgo -fprofile-abs-path -fprofile-update=atomic -fprofile-arcs -ftest-coverage --coverage -fprofile-partial-training"
-export CFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -ffat-lto-objects -flto=16 $PGO_GEN"
-export FCFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -ffat-lto-objects -flto=16 $PGO_GEN"
-export FFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -ffat-lto-objects -flto=16 $PGO_GEN"
-export CXXFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -fvisibility-inlines-hidden -pipe -ffat-lto-objects -flto=16 $PGO_GEN"
-export LDFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -ffat-lto-objects -flto=16 $PGO_GEN"
+export CFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -fPIC -ffat-lto-objects -ffat-lto-objects -flto=16 $PGO_GEN"
+export FCFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -fPIC -ffat-lto-objects -ffat-lto-objects -flto=16 $PGO_GEN"
+export FFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -fPIC -ffat-lto-objects -ffat-lto-objects -flto=16 $PGO_GEN"
+export CXXFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -fvisibility-inlines-hidden -pipe -fPIC -ffat-lto-objects -ffat-lto-objects -flto=16 $PGO_GEN"
+export LDFLAGS_GENERATE="-O3 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -fPIC -ffat-lto-objects -ffat-lto-objects -flto=16 $PGO_GEN"
 ## pgo use
 ## -ffat-lto-objects -fno-PIE -fno-PIE -m64 -no-pie -fpic -fvisibility=hidden  -fno-semantic-interposition  -fno-plt
 ## gcc: -feliminate-unused-debug-types -fipa-pta -flto=16 -Wno-error -Wp,-D_REENTRANT -fno-common
 export PGO_USE="-fprofile-use=/var/tmp/pgo -fprofile-dir=/var/tmp/pgo -fprofile-abs-path -fprofile-correction -fprofile-partial-training"
-export CFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects $PGO_USE"
-export FCFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects $PGO_USE"
-export FFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects $PGO_USE"
-export CXXFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -fvisibility-inlines-hidden -pipe -ffat-lto-objects $PGO_USE"
-export LDFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects $PGO_USE"
+export CFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -fPIC -ffat-lto-objects -ffat-lto-objects $PGO_USE"
+export FCFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -fPIC -ffat-lto-objects -ffat-lto-objects $PGO_USE"
+export FFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -fPIC -ffat-lto-objects -ffat-lto-objects $PGO_USE"
+export CXXFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -fvisibility-inlines-hidden -pipe -fPIC -ffat-lto-objects -ffat-lto-objects $PGO_USE"
+export LDFLAGS_USE="-g -O3 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -fno-math-errno -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -funroll-loops -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -fPIC -ffat-lto-objects -ffat-lto-objects $PGO_USE"
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 #export CCACHE_DISABLE=1
 ## altflags_pgo end
+##
+%define _lto_cflags 1
+##
 export CFLAGS="${CFLAGS_GENERATE}"
 export CXXFLAGS="${CXXFLAGS_GENERATE}"
 export FFLAGS="${FFLAGS_GENERATE}"
 export FCFLAGS="${FCFLAGS_GENERATE}"
 export LDFLAGS="${LDFLAGS_GENERATE}"
-%cmake .. -DLIB_INSTALL_DIR=lib64 -DCMAKE_INSTALL_LIBDIR=lib64 -DBUILD_TESTS=1 -DBUILD_STATIC_LIBS:BOOL=ON -DBUILD_STATIC_LIBS=1 -DENABLE_SHARED:bool=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:bool=ON
+%cmake ..   -DLIB_INSTALL_DIR=lib64 -DCMAKE_INSTALL_LIBDIR=lib64 -DBUILD_TESTS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_STATIC_LIBS=ON -DENABLE_SHARED=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
 make  %{?_smp_mflags}
 
 make VERBOSE=1 V=1 %{?_smp_mflags} test || :
-find . -type f -not -name '*.gcno' -delete -print
+find . -type f,l -not -name '*.gcno' -delete -print
 export CFLAGS="${CFLAGS_USE}"
 export CXXFLAGS="${CXXFLAGS_USE}"
 export FFLAGS="${FFLAGS_USE}"
 export FCFLAGS="${FCFLAGS_USE}"
 export LDFLAGS="${LDFLAGS_USE}"
-%cmake .. -DLIB_INSTALL_DIR=lib64 -DCMAKE_INSTALL_LIBDIR=lib64 -DBUILD_TESTS=1 -DBUILD_STATIC_LIBS:BOOL=ON -DBUILD_STATIC_LIBS=1 -DENABLE_SHARED:bool=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:bool=ON
+%cmake ..   -DLIB_INSTALL_DIR=lib64 -DCMAKE_INSTALL_LIBDIR=lib64 -DBUILD_TESTS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_STATIC_LIBS=ON -DENABLE_SHARED=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
 make  %{?_smp_mflags}
 popd
 mkdir -p clr-build32
 pushd clr-build32
-export CFLAGS="-g -O3 -fuse-linker-plugin -pipe"
-export CXXFLAGS="-g -O3 -fuse-linker-plugin -fvisibility-inlines-hidden -pipe"
-export LDFLAGS="-g -O3 -fuse-linker-plugin -pipe"
+export CFLAGS="-g -O2 -fuse-linker-plugin -pipe"
+export CXXFLAGS="-g -O2 -fuse-linker-plugin -fvisibility-inlines-hidden -pipe"
+export LDFLAGS="-g -O2 -fuse-linker-plugin -pipe"
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
+unset LD_LIBRARY_PATH
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
 export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
 export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
 export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
 export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
-%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DCMAKE_INSTALL_LIBDIR=/usr/lib32 -DLIB_SUFFIX=32 .. -DLIB_INSTALL_DIR=lib64 -DCMAKE_INSTALL_LIBDIR=lib64 -DBUILD_TESTS=1 -DBUILD_STATIC_LIBS:BOOL=ON -DBUILD_STATIC_LIBS=1 -DENABLE_SHARED:bool=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:bool=ON
+%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DCMAKE_INSTALL_LIBDIR=/usr/lib32 -DLIB_SUFFIX=32 ..
 make  %{?_smp_mflags}
 unset PKG_CONFIG_PATH
 popd
@@ -183,12 +208,13 @@ export LANG=C.UTF-8
 unset http_proxy
 unset https_proxy
 unset no_proxy
+export SSL_CERT_FILE=/var/cache/ca-certs/anchors/ca-certificates.crt
 cd clr-build; make test || :
 cd ../clr-build32;
 make test || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1597329908
+export SOURCE_DATE_EPOCH=1600830818
 rm -rf %{buildroot}
 pushd clr-build32
 %make_install32
@@ -211,7 +237,18 @@ popd
 /usr/lib64/libvulkan.so
 /usr/lib64/pkgconfig/vulkan.pc
 
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/libvulkan.so
+/usr/lib32/pkgconfig/32vulkan.pc
+/usr/lib32/pkgconfig/vulkan.pc
+
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libvulkan.so.1
-/usr/lib64/libvulkan.so.1.2.150
+/usr/lib64/libvulkan.so.1.2.154
+
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libvulkan.so.1
+/usr/lib32/libvulkan.so.1.2.154
